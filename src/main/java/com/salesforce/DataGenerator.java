@@ -124,7 +124,6 @@ public class DataGenerator {
             } 
 
 			line = line.substring(0, line.length()-1);			
-			//System.out.println(line);
 			line += "\n";
 			fostream.write(line.getBytes());
 			line = "";
