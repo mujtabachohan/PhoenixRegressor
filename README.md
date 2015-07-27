@@ -5,7 +5,7 @@ Phoenix Performance Regression Test Suite - v1.0-SNAPSHOT
 ``mvn package``
 
 ## Execute
-``java -jar PhoenixRegressor-1.0-SNAPSHOT-jar-with-dependencies.jar``
+Switch to target dir and execute: ``java -jar PhoenixRegressor-1.0-SNAPSHOT-jar-with-dependencies.jar``
 
 Setting are in _settings.json_ file:
 ```
