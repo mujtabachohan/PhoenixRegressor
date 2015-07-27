@@ -2,7 +2,7 @@
 Phoenix Performance Regression Test Suite - v1.0-SNAPSHOT
 
 ## Build
-mvn package
+``mvn package``
 
 ## Execute
 ``java -jar PhoenixRegressor-1.0-SNAPSHOT-jar-with-dependencies.jar``
