@@ -7,19 +7,8 @@ Phoenix Performance Regression Test Suite - v1.0-SNAPSHOT
 ## Execute
 Switch to target dir and execute: ``java -jar PhoenixRegressor-1.0-SNAPSHOT-jar-with-dependencies.jar``
 
-Setting are in _settings.json_ file:
-```
-{
-"TEST":"test",
-"RESULT":"result",
-"CONNECTION_STRING":"jdbc:phoenix:<zookeeper>",
-"RESULT_JSON_PATH":"result",
-"PUBLISH_PATH":"publish",
-"ITERATIONS":5,
-"LOAD_DATA":"true",
-"LABEL":"v4.3"
-}
-```
+Setting are in [_settings.json_](https://github.com/mujtabachohan/PhoenixRegressor/blob/master/src/main/resources/settings.json) file:
+
 Note:
 * This uses test JSONs located at [_TEST_](https://github.com/mujtabachohan/PhoenixRegressor/tree/master/src/main/resources/test) directory. These test GSONs include Phoenix DDL, DML and basic rules for data upserts.
 * _RESULT_ path stores individual test result GSONs
