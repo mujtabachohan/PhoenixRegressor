@@ -1,0 +1,41 @@
+{
+"TABLE":"AGGREGATION_TABLE",
+"DESCRIPTION":"Table used for various aggregation functions",
+"CREATE_DDL":"CREATE TABLE $TABLE (HOST CHAR(2) NOT NULL,DOMAIN VARCHAR NOT NULL,
+FEATURE VARCHAR NOT NULL,DATE DATE NOT NULL,USAGE.CORE BIGINT,USAGE.DB BIGINT,STATS.ACTIVE_VISITOR 
+INTEGER CONSTRAINT PK PRIMARY KEY (HOST, DOMAIN, FEATURE, DATE)) SPLIT ON ('EU','NA')",
+"ROW_COUNT":2000000,
+"FIELDS":[
+  {"fieldType":"STRING","values":["NA","CS","EU"]},
+  {"fieldType":"STRING","values":["Salesforce.com","Apple.com","Google.com","Yelp.com"]},
+  {"fieldType":"STRING","values":["Login","Report","Dashboard","Sales","UI"]},
+  {"fieldType":"DATE","distribution":"SEQUENTIAL"},
+  {"fieldType":"INTEGER","max_value":100,"distribution":"RANDOM"},
+  {"fieldType":"INTEGER","max_value":2000,"distribution":"RANDOM"},
+  {"fieldType":"INTEGER","max_value":10000,"distribution":"RANDOM"}
+],
+"QUERIES":[
+  {"Sql":"select count(*) from $TABLE","Category":"Aggregation"},
+  {"Sql":"select count(1) from $TABLE group by HOST","Category":"Aggregation"},
+  {"Sql":"select core, count(1) from $TABLE group by CORE","Category":"Aggregation"},
+  {"Sql":"select core, host, sum(ACTIVE_VISITOR) from $TABLE group by core, host","Category":"Aggregation"},
+  {"Sql":"select AVG(DB), MIN(CORE), MAX(ACTIVE_VISITOR) from $TABLE where host='CS' and DOMAIN<>'Google.com'","Category":"Aggregation"},
+  {"Sql":"select round(date, 'day',50), sum(core)+2 from $TABLE where (CORE<10 or CORE>90) group by round(date, 'day',50), host","Category":"Aggregation"},
+  {"Sql":"select trunc(date, 'hour', 1000), count(DB), count(ACTIVE_VISITOR) from $TABLE where feature='Login' and (core<50 or db<20 or active_visitor > 200) group by trunc(date, 'hour', 1000)","Category":"Aggregation"},
+  {"Sql":"select count(active_visitor) count from $TABLE","Category":"Aggregation"},
+  {"Sql":"select count(distinct active_visitor) count from $TABLE","Category":"Aggregation"},
+  {"Sql":"select percentile_cont(0.9) within group (order by active_visitor asc) from $TABLE","Category":"Percentile"},
+  {"Sql":"select percentile_cont(0.1) within group (order by active_visitor desc) from $TABLE","Category":"Percentile"},
+  {"Sql":"select count(core), count(db), count(active_visitor) from $TABLE","Category":"Aggregation"},
+  {"Sql":"select count(distinct core), count(distinct db), count(distinct active_visitor) from $TABLE","Category":"Count Distinct"},
+  {"Sql":"select percentile_cont(0.5) within group (order by core asc), percentile_cont(0.5) within group (order by db asc), percentile_cont(0.5) within group (order by active_visitor asc) from $TABLE","Category":"Percentile"},
+  {"Sql":"select core, count(db) count from $TABLE group by CORE","Category":"Aggregation"},
+  {"Sql":"select core, count(distinct db) count from $TABLE group by CORE","Category":"Count Distinct"},
+  {"Sql":"select core, percentile_cont(0.9999) within group (order by db asc) from $TABLE group by CORE","Category":"Percentile"},
+  {"Sql":"select count(core) from $TABLE where core IN (1,25,50,75,100)","Category":"IN/LIKE Clause"},
+  {"Sql":"select count(core) from $TABLE where core < 10 and db < 200","Category":"Aggregation"},
+  {"Sql":"select count(core) from $TABLE where core < 10 and active_visitor < 1000","Category":"Aggregation"},
+  {"Sql":"select * from $TABLE LIMIT 100","Category":"LIMIT"},
+  {"Sql":"select count(core) from $TABLE where core > 90","Category":"Aggregation"}
+]
+}

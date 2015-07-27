@@ -1,0 +1,10 @@
+{
+"TEST":"test",
+"RESULT":"result",
+"CONNECTION_STRING":"jdbc:phoenix:vampire7",
+"RESULT_JSON_PATH":"result",
+"PUBLISH_PATH":"publish",
+"ITERATIONS":5,
+"LOAD_DATA":"true",
+"LABEL":"v4.3"
+}

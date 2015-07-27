@@ -1,0 +1,20 @@
+{
+"TABLE":"IN_LIKE_TABLE",
+"DESCRIPTION":"Phoenix 1.2+ uses skip scan that gives significant performance improvement for IN/LIKE queries.",
+"CREATE_DDL":"CREATE TABLE IF NOT EXISTS $TABLE (K1 CHAR(1) NOT NULL, K2 VARCHAR NOT NULL, CF.A INTEGER, CF.B VARCHAR, CF.C VARCHAR CONSTRAINT PK PRIMARY KEY (K1,K2)) SPLIT ON ('B','C','D','E','F','G','H','I')",
+"ROW_COUNT":2000000,
+"FIELDS":[
+  {"fieldType":"STRING","values":["A","B","C","D","E","F","G","H","I"]},
+  {"fieldType":"STRING","length":10,"distribution":"SEQUENTIAL"},
+  {"fieldType":"INTEGER","max_value":1000000,"distribution":"RANDOM"},
+  {"fieldType":"STRING","length":50,"distribution":"RANDOM"},
+  {"fieldType":"STRING","length":50,"distribution":"RANDOM"}
+],
+"QUERIES":[
+  {"Sql":"select count(1) from $TABLE where K1 in ('Z', 'D', 'F', 'X')","Category":"IN/LIKE Clause"},
+  {"Sql":"select * from $TABLE where K1 in ('A','B') and K2 in ('xxx1000000','xxx2000000','xxx2000001')","Category":"IN/LIKE Clause"},
+  {"Sql":"select * from $TABLE where K1 in ('A', 'C', 'E', 'F', 'H') and K2 like 'xxxxxx1%'","Category":"IN/LIKE Clause"},
+  {"Sql":"select count(*) from $TABLE where K1 in ('X','A','B','C','D','E','F','G','H','I','Z') and K2 like '%1%'","Category":"IN/LIKE Clause"},
+  {"Sql":"select count(*) from $TABLE where (K1 in ('A','E','F','G','H','I','Z') or K1 like 'E%') and (K2 like '%xx1%' or K2 like '%xxxxxx2%')","Category":"IN/LIKE Clause"}
+]
+}

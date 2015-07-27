@@ -1,0 +1,48 @@
+{
+"TABLE":"INDEXED_TABLE",
+"DESCRIPTION":"Indexing test. Phoenix 2.0+ feature. See explain plan by hovering over version label to see which index table is used.",
+"CREATE_DDL":"CREATE TABLE $TABLE (HOST CHAR(2) NOT NULL,DOMAIN VARCHAR NOT NULL,
+FEATURE VARCHAR NOT NULL,DATE DATE NOT NULL,USAGE.CORE BIGINT,USAGE.DB BIGINT,STATS.ACTIVE_VISITOR 
+INTEGER CONSTRAINT PK PRIMARY KEY (HOST, DOMAIN, FEATURE, DATE)) IMMUTABLE_ROWS=true,MAX_FILESIZE=30485760;CREATE INDEX idx1 ON $TABLE (CORE);CREATE INDEX idx2 ON $TABLE (DB);CREATE INDEX idx3 ON $TABLE (DB,ACTIVE_VISITOR);CREATE INDEX idx4 ON $TABLE (CORE,DB,ACTIVE_VISITOR);CREATE INDEX ids1 ON $TABLE (CORE) SALT_BUCKETS=16;CREATE INDEX ids2 ON $TABLE (DB) SALT_BUCKETS=16;CREATE INDEX ids3 ON $TABLE (DB,ACTIVE_VISITOR) SALT_BUCKETS=16;CREATE INDEX ids4 ON $TABLE (CORE,DB,ACTIVE_VISITOR) SALT_BUCKETS=16;",
+"ROW_COUNT":2000000,
+"FIELDS":[
+  {"fieldType":"STRING","values":["NA","CS","EU"]},
+  {"fieldType":"STRING","values":["Salesforce.com","Apple.com","Google.com","Yelp.com"]},
+  {"fieldType":"STRING","values":["Login","Report","Dashboard","Sales","UI"]},
+  {"fieldType":"DATE","distribution":"SEQUENTIAL"},
+  {"fieldType":"INTEGER","max_value":100,"distribution":"RANDOM"},
+  {"fieldType":"INTEGER","max_value":2000,"distribution":"RANDOM"},
+  {"fieldType":"INTEGER","max_value":10000,"distribution":"RANDOM"}
+],
+"QUERIES":[
+  {"Sql":"select count(*) from $TABLE","Category":"Index"},
+  {"Sql":"select /*+ INDEX($TABLE  idx1 idx2 idx3 idx4) */ count(*) from $TABLE","Category":"Index"},
+  {"Sql":"select /*+ INDEX($TABLE  ids1 ids2 ids3 ids4) */ count(*) from $TABLE","Category":"Index"},
+  {"Sql":"select /*+NO_INDEX*/ count(*) from $TABLE","Category":"Index"},
+  {"Sql":"select round(date, 'day',50), sum(core)+2 from $TABLE where (CORE<10 or CORE>90) group by round(date, 'day',50), host","Category":"Index"},
+  {"Sql":"select /*+NO_INDEX*/ round(date, 'day',50), sum(core)+2 from $TABLE where (CORE<10 or CORE>90) group by round(date, 'day',50), host","Category":"Index"},
+  {"Sql":"select count(core) from $TABLE where core IN (1,100)","Category":"Index"},
+  {"Sql":"select /*+ INDEX($TABLE  idx1 idx2 idx3 idx4) */ count(core) from $TABLE where core IN (1,100)","Category":"Index"},
+  {"Sql":"select /*+ INDEX($TABLE  ids1 ids2 ids3 ids4) */ count(core) from $TABLE where core IN (1,100)","Category":"Index"},
+  {"Sql":"select /*+NO_INDEX*/ count(core) from $TABLE where core IN (1,100)","Category":"Index"},
+  {"Sql":"select count(core) from $TABLE where core IN (1,25,50,75,100)","Category":"Index"},
+  {"Sql":"select /*+ INDEX($TABLE  idx1 idx2 idx3 idx4) */ count(core) from $TABLE where core IN (1,25,50,75,100)","Category":"Index"},
+  {"Sql":"select /*+ INDEX($TABLE  ids1 ids2 ids3 ids4) */ count(core) from $TABLE where core IN (1,25,50,75,100)","Category":"Index"},
+  {"Sql":"select /*+NO_INDEX*/ count(core) from $TABLE where core IN (1,25,50,75,100)","Category":"Index"},
+  {"Sql":"select count(core) from $TABLE where core < 10 and db < 200","Category":"Index"},
+  {"Sql":"select /*+ INDEX($TABLE  idx1 idx2 idx3 idx4) */ count(core) from $TABLE where core < 10 and db < 200","Category":"Index"},
+  {"Sql":"select /*+ INDEX($TABLE  ids1 ids2 ids3 ids4) */ count(core) from $TABLE where core < 10 and db < 200","Category":"Index"},
+  {"Sql":"select /*+NO_INDEX*/ count(core) from $TABLE where core < 10 and db < 200","Category":"Index"},
+  {"Sql":"select count(core) from $TABLE where core < 100 and db < 2000","Category":"Index"},
+  {"Sql":"select /*+NO_INDEX*/ count(core) from $TABLE where core < 100 and db < 2000","Category":"Index"},
+  {"Sql":"select count(core) from $TABLE where core > 90","Category":"Index"},
+  {"Sql":"select /*+NO_INDEX*/ count(core) from $TABLE where core > 90","Category":"Index"},
+  {"Sql":"select count(core) from $TABLE where core > 0","Category":"Index"},
+  {"Sql":"select /*+NO_INDEX*/ count(core) from $TABLE where core > 0","Category":"Index"},
+  {"Sql":"select db from $TABLE where db >5 and db <7 order by db","Category":"Index"},
+  {"Sql":"select /*+NO_INDEX*/ db from $TABLE where db >5 and db <7 order by db","Category":"Index"},
+  {"Sql":"select db from $TABLE order by db limit 10","Category":"Index"},
+  {"Sql":"select /*+NO_INDEX*/ db from $TABLE order by db limit 10","Category":"Index"},
+  {"Sql":"CREATE INDEX idx5 ON $TABLE (CORE) INCLUDE (DB,ACTIVE_VISITOR)","Category":"Index Creation After Data"}
+]
+}

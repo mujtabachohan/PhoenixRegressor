@@ -1,0 +1,26 @@
+{
+"TABLE":"TABLE_6CF",
+"DESCRIPTION":"Data is split in 6 column families. Phoenix 1.2+ uses Essential Column Family filter feature which fetches only required columns when filtering rows.",
+"CREATE_DDL":"CREATE TABLE IF NOT EXISTS $TABLE (K1 CHAR(1) NOT NULL, K2 VARCHAR NOT NULL, CF1.A INTEGER, CF2.B INTEGER, CF3.C INTEGER, CF4.D INTEGER, CF5.E INTEGER, CF6.F INTEGER CONSTRAINT PK PRIMARY KEY (K1,K2)) SPLIT ON ('B','C','D');CREATE TABLE IF NOT EXISTS $TABLE_UPSERTSELECT (K1 CHAR(1) NOT NULL, K2 VARCHAR NOT NULL, CF1.A INTEGER, CF2.B INTEGER, CF3.C INTEGER, CF4.D INTEGER, CF5.E INTEGER, CF6.F INTEGER CONSTRAINT PK PRIMARY KEY (K1,K2)) SPLIT ON ('B','C','D')",
+"ROW_COUNT":2000000,
+"FIELDS":[
+  {"fieldType":"STRING","values":["A","B","C","D"]},
+  {"fieldType":"STRING","length":10,"distribution":"SEQUENTIAL"},
+  {"fieldType":"INTEGER","max_value":100,"distribution":"RANDOM"},
+  {"fieldType":"INTEGER","max_value":1000,"distribution":"RANDOM"},
+  {"fieldType":"INTEGER","max_value":2000,"distribution":"RANDOM"},
+  {"fieldType":"INTEGER","max_value":5000,"distribution":"RANDOM"},
+  {"fieldType":"INTEGER","max_value":10000,"distribution":"RANDOM"},
+  {"fieldType":"INTEGER","max_value":15000,"distribution":"RANDOM"}
+],
+"QUERIES":[
+  {"Sql":"select count(1) from $TABLE where K1 in ('A', 'B', 'C', 'D')","Category":"ColumnFamilies-Single"},
+  {"Sql":"select count(1) from $TABLE where K1 in ('A', 'C')","Category":"ColumnFamilies-Single"},
+  {"Sql":"select count(*) from $TABLE where f < 1000","Category":"ColumnFamilies-Single"},
+  {"Sql":"select a,b,c,d,e,f from $TABLE where B>1000 and B<2000 and f>1000 and f<2000","Category":"ColumnFamilies-Single"},
+  {"Sql":"select sum(a),sum(b),sum(c),sum(d) from $TABLE group by K1","Category":"ColumnFamilies-Single"},
+  {"Sql":"select count(*) from $TABLE group by A","Category":"Large Group By"},
+  {"Sql":"select count(*) from $TABLE group by B","Category":"Large Group By"},
+  {"Sql":"select count(*) from $TABLE where f < 10000","Category":"Aggregation with filter no non-pk"}
+]
+}

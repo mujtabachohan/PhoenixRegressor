@@ -1,0 +1,20 @@
+{
+"TABLE":"WIDE_PK",
+"DESCRIPTION":"",
+"CREATE_DDL":"CREATE TABLE IF NOT EXISTS $TABLE (mypk CHAR(500) NOT NULL PRIMARY KEY,CF.column1 INTEGER,CF.column2 INTEGER,CF.column3 INTEGER,CF.column4 INTEGER,CF.column5 INTEGER) SALT_BUCKETS=4;",
+"ROW_COUNT":2000000,
+"FIELDS":[
+  {"fieldType":"STRING","length":500,"distribution":"SEQUENTIAL"},
+  {"fieldType":"INTEGER","distribution":"SEQUENTIAL"},
+  {"fieldType":"INTEGER","max_value":100,"distribution":"RANDOM"},
+  {"fieldType":"INTEGER","max_value":100,"distribution":"RANDOM"},
+  {"fieldType":"INTEGER","max_value":100,"distribution":"RANDOM"},
+  {"fieldType":"INTEGER","max_value":100,"distribution":"RANDOM"}
+],
+"QUERIES":[
+  {"Sql":"select count(*) from $TABLE","Category":"Aggregation"},
+  {"Sql":"select count(*) from $TABLE where column2<10","Category":"Aggregation with filter no non-pk"},
+  {"Sql":"select * from $TABLE order by mypk DESC limit 10","Category":"Reverse Scan"},
+  {"Sql":"select count(*) from $TABLE where column2<50 and column3<50 and column4<50 and column5<50","Category":"Aggregation with filter no non-pk"}
+]
+}

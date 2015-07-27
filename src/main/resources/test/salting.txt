@@ -1,0 +1,19 @@
+{
+"TABLE":"SALTED_TABLE",
+"DESCRIPTION":"This is Phoenix 1.2+ feature. Data is split in 4 regions equal to number of region servers in test cluster by adding salted byte to each key.",
+"CREATE_DDL":"CREATE TABLE $TABLE (K1 CHAR(1) NOT NULL, K2 VARCHAR NOT NULL, CFA.A VARCHAR, CFA.B CHAR(100), CFA.C INTEGER, CFB.D INTEGER CONSTRAINT PK PRIMARY KEY (K1,K2)) SALT_BUCKETS=4",
+"ROW_COUNT":2000000,
+"FIELDS":[
+  {"fieldType":"STRING","values":["A","B","C","D"]},
+  {"fieldType":"STRING","length":10,"distribution":"SEQUENTIAL"},
+  {"fieldType":"STRING","length":100,"distribution":"RANDOM"},
+  {"fieldType":"STRING","length":100,"distribution":"RANDOM"},
+  {"fieldType":"INTEGER","max_value":1000000,"distribution":"RANDOM"},
+  {"fieldType":"INTEGER","max_value":1000000,"distribution":"RANDOM"}
+],
+"QUERIES":[
+  {"Sql":"select count(1) from $TABLE where K1 in ('A', 'B', 'C', 'D')","Category":"Salting"},
+  {"Sql":"select count(*) from $TABLE where D < 1000","Category":"Salting"},
+  {"Sql":"select avg(c),avg(d) from $TABLE group by K1","Category":"Salting"}
+]
+}
